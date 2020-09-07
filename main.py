@@ -43,9 +43,9 @@ questions = [
 
         'type': 'list',
         'name': 'metodo',
-        'message': 'Che metodo vuoi utilizzare?',
+        'message': 'Which method do you want to use?',
         'choices':[
-            'baseline',
+            'Baseline',
             'CNN'
         ],
         'validate': lambda answer: 'You must choose at least one.' \
@@ -53,43 +53,43 @@ questions = [
     },
     {
         'type': 'input',
-        'name': 'pathbaseline',
-        'message': 'Inserisci il Path della cardella dei file CSV: ',
-        'when': lambda answers: answers['metodo'] == 'baseline'
+        'name': 'pathBaseline',
+        'message': 'Insert Path Folder where .csv files are stored:',
+        'when': lambda answers: answers['metodo'] == 'Baseline'
     },
     {
             'type': 'input',
             'name': 'mappeddat',
-            'message': 'Inserisci il Path della cartella dei mapped',
+            'message': 'Insert Path Folder where mapped files are stored:',
             'when': lambda answers: answers['metodo'] == 'CNN'
     },
     {
             'type': 'input',
             'name': 'embeddedp',
-            'message': 'Inserisci il Path della cartella dei file embed',
+            'message': 'Insert Path Folder where embed files are stored:',
             'when': lambda answers: answers['metodo'] == 'CNN'
     },
     {
                 'type': 'input',
-                'name': 'baselinedata',
-                'message': 'Inserisci il Path della cartella dei file CSV',
+                'name': 'Baselinedata',
+                'message': 'Insert Path Folder where .csv files are stored:',
                 'when': lambda answers: answers['metodo'] == 'CNN'
     },
     {
       'type': 'list',
-      'name': 'baselineMethod',
-      'message': 'Scegli il classificatore',
+      'name': 'BaselineMethod',
+      'message': 'Choose the Classifier:',
       'choices': [
           'LogisticRegression',
           'RandomForest',
           'SVC',
         ],
-      'when': lambda answers: answers['metodo'] == 'baseline' and answers['pathbaseline'] != ''
+      'when': lambda answers: answers['metodo'] == 'Baseline' and answers['pathBaseline'] != ''
     },
     {
       'type': 'list',
       'name': 'CNNMethod',
-      'message': 'Scegli il classificatore',
+      'message': 'Choose the Classifier:',
       'choices': [
           'LogisticRegression',
           'RandomForest',
@@ -98,13 +98,13 @@ questions = [
     },
     {
             'type': 'confirm',
-            'message': 'Vuoi utilizzare la DS3?',
+            'message': 'Do you want to enable DS3?',
             'name': 'DS3',
             'default': False,
     },
     {
         'type': 'expand',
-        'message': 'Scegli la distanza da utilizzare: ',
+        'message': 'Choose the dissimilarity distance:',
         'name': 'distance',
         'default': 'c',
         'choices': [
@@ -124,7 +124,7 @@ questions = [
                 'value': 'c'
             },
         ],
-        'when': lambda answers: answers['DS3'] and answers['pathbaseline'] != ''
+        'when': lambda answers: answers['DS3'] and answers['pathBaseline'] != ''
     },
     {
             'type': 'confirm',
@@ -134,7 +134,7 @@ questions = [
     },
     {
             'type': 'confirm',
-            'message': 'Plot?',
+            'message': 'Do you want to save plots?',
             'name': 'plot',
             'default': False,
     },
@@ -148,24 +148,24 @@ pprint(answers)
 
 
 
-if answers['metodo'] == 'baseline':
-    if answers['baselineMethod'] == 'LogisticRegression':
+if answers['metodo'] == 'Baseline':
+    if answers['BaselineMethod'] == 'LogisticRegression':
         if not answers['DS3']:
             answers['distance'] = ''
-        cl.start_run(answers['pathbaseline'], answers['DS3'], answers['distance'], answers['plot'], verbose= answers['verbose'])
-    if answers['baselineMethod'] == 'RandomForest':
+        cl.start_run(answers['pathBaseline'], answers['DS3'], answers['distance'], answers['plot'], verbose= answers['verbose'])
+    if answers['BaselineMethod'] == 'RandomForest':
         if not answers['DS3']:
             answers['distance'] = ''
-        crf.start_run(answers['pathbaseline'], answers['DS3'], answers['distance'], answers['plot'], verbose= answers['verbose'])
-    if answers['baselineMethod'] == 'SVC':
+        crf.start_run(answers['pathBaseline'], answers['DS3'], answers['distance'], answers['plot'], verbose= answers['verbose'])
+    if answers['BaselineMethod'] == 'SVC':
         if not answers['DS3']:
             answers['distance'] = ''
-        csvc.start_run(answers['pathbaseline'], answers['DS3'], answers['distance'], answers['plot'], verbose= answers['verbose'])
+        csvc.start_run(answers['pathBaseline'], answers['DS3'], answers['distance'], answers['plot'], verbose= answers['verbose'])
 
 if answers['metodo'] == 'CNN':
     if not answers['DS3']:
         answers['distance'] = ''
 
-    cnn.start_run(answers['mappeddat'], answers['embeddedp'], answers['baselinedata'], answers['CNNMethod'], answers['DS3'],answers['verbose'], answers['plot'])
+    cnn.start_run(answers['mappeddat'], answers['embeddedp'], answers['Baselinedata'], answers['CNNMethod'], answers['DS3'],answers['verbose'], answers['plot'])
 
 

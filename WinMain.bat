@@ -20,7 +20,7 @@ echo   ╚═════╝ ╚═════╝  ╚═════╝  ╚�
 
 
 
-CALL "venv\Scripts\activate.bat"
+CALL ".\venv\Scripts\activate.bat"
 python main.py
 
 PAUSE
