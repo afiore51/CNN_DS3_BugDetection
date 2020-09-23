@@ -1,3 +1,4 @@
+
 from __future__ import print_function, unicode_literals
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -124,7 +125,7 @@ questions = [
                 'value': 'c'
             },
         ],
-        'when': lambda answers: answers['DS3'] and answers['pathBaseline'] != ''
+        'when': lambda answers: answers['DS3'] 
     },
     {
             'type': 'confirm',

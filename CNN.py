@@ -2,7 +2,8 @@ import path
 import Utils.constant as c
 import Utils.functions as func
 import tensorflow as tf
-
+import shutil
+import os
 from tensorflow import keras
 from tensorflow.keras import datasets, layers, models
 import matplotlib.pyplot as plt
@@ -185,7 +186,7 @@ def generate_token(ant_token, version_tuple, classificatore, ds3=False, verbose=
     if classificatore == 'LogisticRegression':
         y_predicted = run_logisticRegression(ntrain_X, ntrain_y, ntest_X, ntest_y, verbose=verbose, plot=plot)
     if classificatore == 'RandomForest':
-        y_predicted = run_random_forest(ntrain_X, ntrain_y, ntest_X, ntest_y, verbose = False, plot = False)
+        y_predicted = run_random_forest(ntrain_X, ntrain_y, ntest_X, ntest_y, verbose=verbose, plot=plot)
 
     print('Finished')
 
@@ -196,9 +197,18 @@ def generate_token(ant_token, version_tuple, classificatore, ds3=False, verbose=
     # pd.DataFrame(y_predicted).to_csv(r'Prediction for'+d.project[0] +f'versions {current.version[1]}.csv')
     print('Saving the results...')
     version_current = re.search("(\d+)\.(\d+)", version_tuple[1]).group()
-    resultcsv.to_csv(
-        f'.\Results\Prediction for {version_tuple[0][:version_tuple[0].index("-")]} version {version_current} CNN {classificatore} {typetest}.csv',
-        index=False)
+
+    if os.name == 'nt':
+        resultcsv.to_csv(
+            f'.\Results\Prediction for {version_tuple[0][:version_tuple[0].index("-")]} version {version_current} CNN {classificatore} {typetest}.csv',
+            index=False)
+    if os.name == 'posix':
+        resultcsv.to_csv(
+            f'./Results/Prediction for {version_tuple[0][:version_tuple[0].index("-")]} version {version_current} CNN {classificatore} {typetest}.csv',
+            index=False)
+
+
+
     return
 
 
@@ -305,10 +315,10 @@ def create_model(train_X, tokens, n_filters=15, filter_size=5):
 def generate_new_features(model, train_X, train_y, test_X, test_y):
     scaler = StandardScaler()
     scaler.fit(train_X)
-    X_train = scaler.transform(train_X)
+    '''X_train = scaler.transform(train_X)
     y_train = train_y
     X_test = scaler.transform(test_X)
-    y_test = test_y
+    y_test = test_y'''
 
     callback = tf.keras.callbacks.EarlyStopping(monitor='accuracy', min_delta=0.0001, patience=10)
     model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0015), loss='sparse_categorical_crossentropy',
@@ -458,7 +468,8 @@ def run_random_forest(train_X, train_y, test_X, test_y, verbose=False, plot=Fals
     if plot:
         fig = px.scatter(y_test)
         fig.add_trace(go.Scatter(x=list(range(y_test.shape[0])), y=y_predicted))
-        fig.show()
+        #fig.show()
+        fig.write_image("./Plots/fig1.png")
 
     print()
 
@@ -523,15 +534,22 @@ def run_logisticRegression(train_X, train_y, test_X, test_y, verbose=False, plot
     clf = clf.fit(X_train, y_train)
     ##PREDICT##
     y_predicted = clf.predict(X_test)
-    print(y_predicted)
     ##CALCULATE SCORE OF THE MODEL##
     score = clf.score(X_test, y_test)
+
+    if plot:
+        fig = px.scatter(y_test)
+        fig.add_trace(go.Scatter(x=list(range(y_test.shape[0])), y=y_predicted))
+        #fig.show()
+        fig.write_image("fig1.png")
+
+
     if True:
         print(f'- LogisticRegression score: {score}')
     # CONFUCIO MATRIX##
     cm = metrics.confusion_matrix(y_test, y_predicted)
     ##PLOT CONFUSION MATRIX##
-    if plot:
+    '''if plot:
         plt.figure(figsize=(9, 9))
         sns.heatmap(cm, annot=True, fmt=".3f", linewidths=.5, square=True, cmap='Blues_r')
         plt.ylabel('Actual label')
@@ -539,7 +557,7 @@ def run_logisticRegression(train_X, train_y, test_X, test_y, verbose=False, plot
         # all_sample_title = 'Confusion matrix \n Accuracy Score: {0}\n {1} {2}'.format(score, previous.version[0], current.version[1])
         plt.ylabel('Actual label')
         plt.xlabel('Predicted label')
-        # plt.title(all_sample_title, size=15);
+        # plt.title(all_sample_title, size=15);'''
     cmm = metrics.multilabel_confusion_matrix(y_test, y_predicted)
     if verbose:
         print("Confusion multiclass matrix :\n", cmm)
@@ -597,15 +615,30 @@ def start_run(mappeddat,embeddedp,classicdata,classificatore, ds3=False, verbose
     global mappeddataset
     global embeddedpath
     global classicdataset
+
+    Path('./Results').mkdir(parents=True, exist_ok=True)
+    Path('./Plots').mkdir(parents=True, exist_ok=True)
     start_time = time.time()
 
     mappeddataset = mappeddat
     embeddedpath = embeddedp
     classicdataset = classicdata
+
+    mappeddataset = mappeddataset.strip()
+    embeddedpath = embeddedpath.strip()
+    classicdataset = classicdataset.strip()
+
+    if "'" in mappeddataset:
+        mappeddataset = mappeddataset.replace("'", "")
+    if "'" in embeddedpath:
+        embeddedpath = embeddedpath.replace("'", "")
+    if "'" in classicdataset:
+        classicdataset = classicdataset.replace("'", "")
+
     ant_csv = glob.glob(mappeddataset + '/*.csv')
 
     if verbose:
-        print(ant_csv)
+        print(ant_csv.sort())
     ant_token = []
 
     for i in ant_csv:
@@ -613,11 +646,16 @@ def start_run(mappeddat,embeddedp,classicdata,classificatore, ds3=False, verbose
         ant_token.append(tmp)
 
     ant_token = pd.concat(ant_token)
+
+
     ant_token['pathfolder'] = ant_token['pathfolder'].apply(lambda x: x.replace('.embed', ''))
-    versions = [i.split('\\')[-1] for i in ant_csv]
+    if os.name == 'nt':
+        versions = [i.split('\\')[-1] for i in ant_csv]
+    if os.name == 'posix':
+        versions = [i.split("/")[-1] for i in ant_csv]
     version_tuple = [(x, y) for x, y in zip(versions[0::1], versions[1::1])]
     if verbose:
-        print(version_tuple)
+        print(version_tuple.sort())
 
     for v in version_tuple:
         if verbose:
@@ -625,5 +663,6 @@ def start_run(mappeddat,embeddedp,classicdata,classificatore, ds3=False, verbose
         generate_token(ant_token, v, classificatore, ds3=ds3, verbose=verbose, plot=plot)
 
     pprint('All Done')
+    shutil.rmtree('/DATA')
     pprint("--- %s seconds ---" % (time.time() - start_time))
 
