@@ -33,6 +33,8 @@ import plotly.graph_objects as go
 from sklearn.metrics import recall_score
 from imblearn.metrics import specificity_score
 import plotly.express as px
+from pathlib import Path
+
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -50,6 +52,8 @@ distances = ['e', 'm', 'c']
 
 
 def start_run(dataset_csv, DS3, distance, plot, verbose=False):
+    Path('./Results').mkdir(parents=True, exist_ok=True)
+    Path('./Plots').mkdir(parents=True, exist_ok=True)
     print('Reading CSV Folder')
     d = []
     for filename in os.listdir(dataset_csv):
@@ -85,14 +89,14 @@ def start_run(dataset_csv, DS3, distance, plot, verbose=False):
             idx = f.runDS3(D, reg=.5, verbose=False)
             typetest = 'DS3'
             print('Starting SCV')
-            y_predicted = f.run_SVC(previous, current, idx, ds3=True, verbose=False, plot=False)
+            y_predicted, plot_fig = f.run_SVC(previous, current, idx, ds3=True, verbose=False, plot=False)
 
         else:
             if verbose:
                 print('______WITHOUT DS3______')
             print('Starting SVC')
             typetest = 'Without DS3'
-            y_predicted = f.run_SVC(previous, current, None, ds3=False, verbose=False, plot=False)
+            y_predicted, plot_fig = f.run_SVC(previous, current, None, ds3=False, verbose=False, plot=False)
         print("__________________________")
 
         # print(y_predicted)
@@ -105,6 +109,13 @@ def start_run(dataset_csv, DS3, distance, plot, verbose=False):
 
         # pd.DataFrame(y_predicted).to_csv(r'Prediction for'+d.project[0] +f'versions {current.version[1]}.csv')
         print('Saving the results')
-        resultcsv.to_csv(f'.\Results\Prediction for {d.project.iloc[0]} version {current.version[1]} SVC {typetest}.csv',
+        if os.name == 'nt':
+            resultcsv.to_csv(f'.\Results\Prediction for {d.project.iloc[0]} version {current.version[1]} SVC {typetest}.csv',
                          index=False)
+            plot_fig.write_image(f'.\Plots\Prediction for {d.project.iloc[0]} version {current.version[1]} SVC {typetest}.png')
+        if os.name == 'posix':
+            resultcsv.to_csv(
+                f'./Plots/Prediction for {d.project.iloc[0]} version {current.version[1]} SVC {typetest}.csv',
+                index=False)
+            plot_fig.write_image(f'./Plots/Prediction for {d.project.iloc[0]} version {current.version[1]} SVC {typetest}.png')
 

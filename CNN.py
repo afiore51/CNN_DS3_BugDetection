@@ -184,9 +184,9 @@ def generate_token(ant_token, version_tuple, classificatore, ds3=False, verbose=
 
     print('Starting Regression...')
     if classificatore == 'LogisticRegression':
-        y_predicted = run_logisticRegression(ntrain_X, ntrain_y, ntest_X, ntest_y, verbose=verbose, plot=plot)
+        y_predicted, plot_fig  = run_logisticRegression(ntrain_X, ntrain_y, ntest_X, ntest_y, verbose=verbose, plot=plot)
     if classificatore == 'RandomForest':
-        y_predicted = run_random_forest(ntrain_X, ntrain_y, ntest_X, ntest_y, verbose=verbose, plot=plot)
+        y_predicted, plot_fig = run_random_forest(ntrain_X, ntrain_y, ntest_X, ntest_y, verbose=verbose, plot=plot)
 
     print('Finished')
 
@@ -202,10 +202,13 @@ def generate_token(ant_token, version_tuple, classificatore, ds3=False, verbose=
         resultcsv.to_csv(
             f'.\Results\Prediction for {version_tuple[0][:version_tuple[0].index("-")]} version {version_current} CNN {classificatore} {typetest}.csv',
             index=False)
+        plot_fig.write_image(f'.\Plots\Prediction for {version_tuple[0][:version_tuple[0].index("-")]} version {version_current} CNN {classificatore} {typetest}.png')
     if os.name == 'posix':
         resultcsv.to_csv(
             f'./Results/Prediction for {version_tuple[0][:version_tuple[0].index("-")]} version {version_current} CNN {classificatore} {typetest}.csv',
             index=False)
+        plot_fig.write_image(f'./Plots/Prediction for {version_tuple[0][:version_tuple[0].index("-")]} version {version_current} CNN {classificatore} {typetest}.png')
+
 
 
 
@@ -469,7 +472,7 @@ def run_random_forest(train_X, train_y, test_X, test_y, verbose=False, plot=Fals
         fig = px.scatter(y_test)
         fig.add_trace(go.Scatter(x=list(range(y_test.shape[0])), y=y_predicted))
         #fig.show()
-        fig.write_image("./Plots/fig1.png")
+        plot_fig = fig
 
     print()
 
@@ -519,7 +522,7 @@ def run_random_forest(train_X, train_y, test_X, test_y, verbose=False, plot=Fals
     '''filename = join(c.MODEL_DIR , 'digits_classifier.joblib.pkl')
     _ = joblib.dump(clf, filename, compress=9)
     '''
-    return y_predicted
+    return y_predicted, plot_fig
 
 
 def run_logisticRegression(train_X, train_y, test_X, test_y, verbose=False, plot=False):
@@ -541,7 +544,8 @@ def run_logisticRegression(train_X, train_y, test_X, test_y, verbose=False, plot
         fig = px.scatter(y_test)
         fig.add_trace(go.Scatter(x=list(range(y_test.shape[0])), y=y_predicted))
         #fig.show()
-        fig.write_image("fig1.png")
+        plot_fig = fig
+
 
 
     if True:
@@ -608,7 +612,7 @@ def run_logisticRegression(train_X, train_y, test_X, test_y, verbose=False, plot
     '''filename = join(c.MODEL_DIR , 'digits_classifier.joblib.pkl')
     _ = joblib.dump(clf, filename, compress=9)
     '''
-    return y_predicted
+    return y_predicted,plot_fig
 
 
 def start_run(mappeddat,embeddedp,classicdata,classificatore, ds3=False, verbose=False, plot=False):

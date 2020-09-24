@@ -142,6 +142,11 @@ def run_logisticRegression(previous, current, idx, ds3=False, verbose=False, plo
     y_predicted = clf.predict(X_test)
     # print(y_predicted)
     ##CALCULATE SCORE OF THE MODEL##
+    ##CALCULATE SCORE OF THE MODEL##
+    if plot:
+        fig = px.scatter(y_test)
+        fig.add_trace(go.Scatter(x=list(range(y_test.shape[0])), y=y_predicted))
+        plot_fig = fig
     score = clf.score(X_test, y_test)
     if True:
         print(f'- LogisticRegression score: {score}')
@@ -208,7 +213,7 @@ def run_logisticRegression(previous, current, idx, ds3=False, verbose=False, plo
     '''filename = join(c.MODEL_DIR , 'digits_classifier.joblib.pkl')
     _ = joblib.dump(clf, filename, compress=9)
     '''
-    return y_predicted
+    return y_predicted, plot_fig
 
 
 def run_SVC(previous, current, idx, ds3=False, verbose=False, plot=False):
@@ -273,7 +278,8 @@ def run_SVC(previous, current, idx, ds3=False, verbose=False, plot=False):
     if plot:
         fig = px.scatter(y_test)
         fig.add_trace(go.Scatter(x=list(range(y_test.shape[0])), y=y_predicted))
-        fig.show()
+        plot_fig = fig
+
 
     cm = metrics.confusion_matrix(y_test, y_predicted)
     gmean = geometric_mean_score(y_test, y_predicted, average='micro')
@@ -313,7 +319,7 @@ def run_SVC(previous, current, idx, ds3=False, verbose=False, plot=False):
     '''filename = join(c.MODEL_DIR , 'digits_classifier.joblib.pkl')
     _ = joblib.dump(clf, filename, compress=9)
     '''
-    return y_predicted
+    return y_predicted, plot_fig
 
 
 def evaluate(model, test_features, test_labels):
@@ -377,7 +383,7 @@ def run_RandomForest(previous, current, idx, ds3=False, verbose=False, plot=Fals
     if plot:
         fig = px.scatter(y_test)
         fig.add_trace(go.Scatter(x=list(range(y_test.shape[0])), y=y_predicted))
-        fig.show()
+        plot_fig = fig
 
     print()
 
@@ -427,4 +433,4 @@ def run_RandomForest(previous, current, idx, ds3=False, verbose=False, plot=Fals
     '''filename = join(c.MODEL_DIR , 'digits_classifier.joblib.pkl')
     _ = joblib.dump(clf, filename, compress=9)
     '''
-    return y_predicted
+    return y_predicted, plot_fig

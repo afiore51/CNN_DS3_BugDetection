@@ -36,6 +36,8 @@ import plotly.graph_objects as go
 from sklearn.metrics import recall_score
 from imblearn.metrics import specificity_score
 import plotly.express as px
+from pathlib import Path
+
 import warnings
 warnings.filterwarnings('ignore')
 needed = ['name', 'wmc', 'dit', 'noc', 'cbo', 'rfc', 'lcom',
@@ -51,6 +53,8 @@ distances = ['e', 'm', 'c']
 
 
 def start_run(dataset_csv, DS3, distance, plot, verbose=False):
+    Path('./Results').mkdir(parents=True, exist_ok=True)
+    Path('./Plots').mkdir(parents=True, exist_ok=True)
     print('Reading CSV Folder')
     d = []
     for filename in os.listdir(dataset_csv):
@@ -86,28 +90,36 @@ def start_run(dataset_csv, DS3, distance, plot, verbose=False):
             D = f.create_D(current, previous, features, distance)
             idx = f.runDS3(D, reg=.5, verbose=False)
             print('Starting Random Forest')
-            y_predicted = f.run_RandomForest(previous, current, idx, ds3=True, verbose=False, plot=False)
+            y_predicted, plot_fig = f.run_RandomForest(previous, current, idx, ds3=True, verbose=False, plot=False)
 
         else:
             if verbose:
                 print('______WITHOUT DS3______')
             typetest = 'Without DS3'
             print('Starting Random Forest')
-            y_predicted = f.run_RandomForest(previous, current, None, ds3=False, verbose=False, plot=False)
+            y_predicted, plot_fig = f.run_RandomForest(previous, current, None, ds3=False, verbose=False, plot=False)
         print("__________________________")
 
         # print(y_predicted)
         resultcsv = pd.DataFrame()
         # y_predicted = pd.DataFrame(y_predicted, columns=["bug predicted"])
-        resultcsv['projcet'] = current.project
+        resultcsv['project'] = current.project
         resultcsv['version'] = current.version
         resultcsv['name'] = current.name
         resultcsv["bug predicted"] = y_predicted
 
         # pd.DataFrame(y_predicted).to_csv(r'Prediction for'+d.project[0] +f'versions {current.version[1]}.csv')
         print('Saving the results')
-        resultcsv.to_csv(
-            f'.\Results\Prediction for {d.project.iloc[0]} version {current.version[1]} RandomForest {typetest}.csv',
-            index=False)
+        if os.name == 'nt':
+            resultcsv.to_csv(
+                f'.\Results\Prediction for {d.project.iloc[0]} version {current.version[1]} RandomForest {typetest}.csv',
+                index=False)
+            plot_fig.write_image(f'.\Plots\Prediction for {d.project.iloc[0]} version {current.version[1]} RandomForest {typetest}.png')
+        if os.name == 'posix':
+            resultcsv.to_csv(
+                f'./Results/Prediction for {d.project.iloc[0]} version {current.version[1]} RandomForest {typetest}.csv',
+                index=False)
+            plot_fig.write_image(f'./Plots/Prediction for {d.project.iloc[0]} version {current.version[1]} RandomForest {typetest}.png')
+
 
 
