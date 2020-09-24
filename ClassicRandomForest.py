@@ -90,14 +90,14 @@ def start_run(dataset_csv, DS3, distance, plot, verbose=False):
             D = f.create_D(current, previous, features, distance)
             idx = f.runDS3(D, reg=.5, verbose=False)
             print('Starting Random Forest')
-            y_predicted, plot_fig = f.run_RandomForest(previous, current, idx, ds3=True, verbose=False, plot=False)
+            y_predicted, plot_fig = f.run_RandomForest(previous, current, idx, ds3=True, verbose=False, plot=plot)
 
         else:
             if verbose:
                 print('______WITHOUT DS3______')
             typetest = 'Without DS3'
             print('Starting Random Forest')
-            y_predicted, plot_fig = f.run_RandomForest(previous, current, None, ds3=False, verbose=False, plot=False)
+            y_predicted, plot_fig = f.run_RandomForest(previous, current, None, ds3=False, verbose=False, plot=plot)
         print("__________________________")
 
         # print(y_predicted)
@@ -114,12 +114,14 @@ def start_run(dataset_csv, DS3, distance, plot, verbose=False):
             resultcsv.to_csv(
                 f'.\Results\Prediction for {d.project.iloc[0]} version {current.version[1]} RandomForest {typetest}.csv',
                 index=False)
-            plot_fig.write_image(f'.\Plots\Prediction for {d.project.iloc[0]} version {current.version[1]} RandomForest {typetest}.png')
+            if not (plot_fig is None):
+                plot_fig.write_image(f'.\Plots\Prediction for {d.project.iloc[0]} version {current.version[1]} RandomForest {typetest}.png')
         if os.name == 'posix':
             resultcsv.to_csv(
                 f'./Results/Prediction for {d.project.iloc[0]} version {current.version[1]} RandomForest {typetest}.csv',
                 index=False)
-            plot_fig.write_image(f'./Plots/Prediction for {d.project.iloc[0]} version {current.version[1]} RandomForest {typetest}.png')
+            if not (plot_fig is None):
+                plot_fig.write_image(f'./Plots/Prediction for {d.project.iloc[0]} version {current.version[1]} RandomForest {typetest}.png')
 
 
 

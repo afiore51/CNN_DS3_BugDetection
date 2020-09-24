@@ -142,7 +142,7 @@ def run_logisticRegression(previous, current, idx, ds3=False, verbose=False, plo
     y_predicted = clf.predict(X_test)
     # print(y_predicted)
     ##CALCULATE SCORE OF THE MODEL##
-    ##CALCULATE SCORE OF THE MODEL##
+    plot_fig = None
     if plot:
         fig = px.scatter(y_test)
         fig.add_trace(go.Scatter(x=list(range(y_test.shape[0])), y=y_predicted))
@@ -275,10 +275,12 @@ def run_SVC(previous, current, idx, ds3=False, verbose=False, plot=False):
     print()
     print()
     ##CALCULATE SCORE OF THE MODEL##
+    plot_fig = None
     if plot:
         fig = px.scatter(y_test)
         fig.add_trace(go.Scatter(x=list(range(y_test.shape[0])), y=y_predicted))
         plot_fig = fig
+
 
 
     cm = metrics.confusion_matrix(y_test, y_predicted)
@@ -380,10 +382,12 @@ def run_RandomForest(previous, current, idx, ds3=False, verbose=False, plot=Fals
     y_predicted = clf.predict(X_test)
 
     ##CALCULATE SCORE OF THE MODEL##
+    plot_fig = None
     if plot:
         fig = px.scatter(y_test)
         fig.add_trace(go.Scatter(x=list(range(y_test.shape[0])), y=y_predicted))
         plot_fig = fig
+
 
     print()
 

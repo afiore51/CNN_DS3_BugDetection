@@ -89,20 +89,20 @@ def start_run(dataset_csv, DS3, distance, plot, verbose=False):
             idx = f.runDS3(D, reg=.5, verbose=False)
             typetest = 'DS3'
             print('Starting SCV')
-            y_predicted, plot_fig = f.run_SVC(previous, current, idx, ds3=True, verbose=False, plot=False)
+            y_predicted, plot_fig = f.run_SVC(previous, current, idx, ds3=True, verbose=False, plot=plot)
 
         else:
             if verbose:
                 print('______WITHOUT DS3______')
             print('Starting SVC')
             typetest = 'Without DS3'
-            y_predicted, plot_fig = f.run_SVC(previous, current, None, ds3=False, verbose=False, plot=False)
+            y_predicted, plot_fig = f.run_SVC(previous, current, None, ds3=False, verbose=False, plot=plot)
         print("__________________________")
 
         # print(y_predicted)
         resultcsv = pd.DataFrame()
         # y_predicted = pd.DataFrame(y_predicted, columns=["bug predicted"])
-        resultcsv['projcet'] = current.project
+        resultcsv['project'] = current.project
         resultcsv['version'] = current.version
         resultcsv['name'] = current.name
         resultcsv["bug predicted"] = y_predicted
@@ -112,10 +112,12 @@ def start_run(dataset_csv, DS3, distance, plot, verbose=False):
         if os.name == 'nt':
             resultcsv.to_csv(f'.\Results\Prediction for {d.project.iloc[0]} version {current.version[1]} SVC {typetest}.csv',
                          index=False)
-            plot_fig.write_image(f'.\Plots\Prediction for {d.project.iloc[0]} version {current.version[1]} SVC {typetest}.png')
+            if not (plot_fig is None):
+                plot_fig.write_image(f'.\Plots\Prediction for {d.project.iloc[0]} version {current.version[1]} SVC {typetest}.png')
         if os.name == 'posix':
             resultcsv.to_csv(
                 f'./Plots/Prediction for {d.project.iloc[0]} version {current.version[1]} SVC {typetest}.csv',
                 index=False)
-            plot_fig.write_image(f'./Plots/Prediction for {d.project.iloc[0]} version {current.version[1]} SVC {typetest}.png')
+            if not (plot_fig is None):
+                plot_fig.write_image(f'./Plots/Prediction for {d.project.iloc[0]} version {current.version[1]} SVC {typetest}.png')
 
