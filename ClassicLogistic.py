@@ -102,11 +102,11 @@ def start_run(dataset_csv, DS3, distance, plot, verbose=False):
             resultcsv.to_csv(
                 f'.\Results\Prediction for {d.project.iloc[0]} version {current.version[1]} Logistic {typetest}.csv',
                 index=False)
-            if not (plot_fig in None):
+            if not (plot_fig is None):
                 plot_fig.write_image(f'.\Plots\Prediction for {d.project.iloc[0]} version {current.version[1]} Logistic {typetest}.png')
         if os.name == 'posix':
             resultcsv.to_csv(
                 f'./Plots/Prediction for {d.project.iloc[0]} version {current.version[1]} Logistic {typetest}.csv',
                 index=False)
-            if not (plot_fig in None):
+            if not (plot_fig is None):
                 plot_fig.write_image(f'./Plots/Prediction for {d.project.iloc[0]} version {current.version[1]} Logistic {typetest}.png')
