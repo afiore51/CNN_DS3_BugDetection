@@ -78,5 +78,5 @@ The header of those files will be the following:
  - bug predicted
 
 The name of results file will follow this paradigm: "Prediction for *{SoftwareName}* +
-verion + *{version of the software tested}* + *{process used}* + *{use or not of DS3}*.csv", for example: "Prediction for ant version 1.4 Logistic DS3.csv". 
+version + *{version of the software tested}* + *{process used}* + *{use or not of DS3}*.csv", for example: "Prediction for ant version 1.4 Logistic DS3.csv". 
 Also plot’s name will have the same paradigm name.
