@@ -40,6 +40,14 @@ permissions to our file and then run it from the console.
 For Windows instead we just need to double-click the .bat file.
 Now we take a look of the two "parts" of DS3.
 
+## Dataset
+The dataset used for this experiment is available at the following repository:
+
+  - [https://github.com/penguincwarrior/CNN-WPDP-APPSCI2019](https://github.com/penguincwarrior/CNN-WPDP-APPSCI2019)
+
+
+
+
 ## Baseline
 As the name suggests, *Baseline* refers to a classic approach to software defect prediction.
 It gives the possibility to use the following
